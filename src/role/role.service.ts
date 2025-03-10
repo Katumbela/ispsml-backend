@@ -57,6 +57,16 @@ export class RoleService {
 
     async remove(id: number) {
         await this.findOne(id);
-        return this.prisma.role.delete({ where: { id } });
+        
+        // Use transaction to ensure both operations succeed or fail together
+        return this.prisma.$transaction(async (prisma) => {
+            // First delete all phrases associated with this role
+            await prisma.phrase.deleteMany({
+                where: { roleId: id }
+            });
+            
+            // Then delete the role
+            return prisma.role.delete({ where: { id } });
+        });
     }
 }
