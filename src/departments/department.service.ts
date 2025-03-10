@@ -65,14 +65,49 @@ export class DepartmentService extends BaseService<UpdateDepartmentDto> {
 
     async deleteDepartment(id: number) {
         return this.prisma.$transaction(async (prisma) => {
+            // Find all courses in the department
+            const courses = await prisma.course.findMany({
+                where: { departmentId: Number(id) },
+                include: { years: { include: { semesters: true } } }
+            });
+
+            // Delete all related entities in the correct order (from deepest to shallowest)
+            for (const course of courses) {
+                for (const year of course.years) {
+                    for (const semester of year.semesters) {
+                        // Delete subjects for each semester
+                        await prisma.subject.deleteMany({
+                            where: { semesterId: semester.id }
+                        });
+                    }
+                    // Delete semesters for each year
+                    await prisma.semester.deleteMany({
+                        where: { yearId: year.id }
+                    });
+                }
+                // Delete years for each course
+                await prisma.year.deleteMany({
+                    where: { courseId: course.id }
+                });
+                // Delete shift for the course
+                await prisma.shift.deleteMany({
+                    where: { courseId: course.id }
+                });
+            }
+
+            // Delete all courses in the department
             await prisma.course.deleteMany({
-                where: { departmentId: id },
+                where: { departmentId: Number(id) }
             });
+
+            // Delete department director
             await prisma.departmentDirector.deleteMany({
-                where: { departmentId: id },
+                where: { departmentId: Number(id) }
             });
+
+            // Finally delete the department itself
             return prisma.department.delete({
-                where: { id },
+                where: { id: Number(id) }
             });
         });
     }
