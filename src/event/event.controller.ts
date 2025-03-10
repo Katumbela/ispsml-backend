@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
 import { EventService } from './event.service';
 import { CreateEventDto, UpdateEventDto } from './dto/event.dto';
 
@@ -22,7 +22,7 @@ export class EventController {
         return event;
     }
     @Get('slug/:slug')
-    async findOne(@Param('slug') slug: string) {
+    async findBySlug(@Param('slug') slug: string) {
         const event = await this.eventService.findFirst({ slug});;
         if (!event) {
             throw new NotFoundException('Evento não encontrado!');
