@@ -9,16 +9,21 @@ export class EventController {
     constructor(private readonly eventService: EventService) { }
 
     @Get()
-    findAll(@Query('slug') slug?: string) {
-        if (slug) {
-            return this.eventService.findBySlug(slug);
-        }
+    findAll() { 
         return this.eventService.findAll();
     }
 
     @Get(':id')
     async findOne(@Param('id') id: string) {
         const event = await this.eventService.findOne({ id: Number(id) });;
+        if (!event) {
+            throw new NotFoundException('Evento não encontrado!');
+        }
+        return event;
+    }
+    @Get('slug/:slug')
+    async findOne(@Param('slug') slug: string) {
+        const event = await this.eventService.findFirst({ slug});;
         if (!event) {
             throw new NotFoundException('Evento não encontrado!');
         }
