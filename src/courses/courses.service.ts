@@ -90,6 +90,33 @@ export class CourseService {
     }
 
     async remove(id: number) {
-        return this.prisma.course.delete({ where: { id: Number(id) } });
+        return this.prisma.$transaction(async (prisma) => {
+            // Delete related entities in the correct order
+            const course = await prisma.course.findUnique({
+                where: { id: Number(id) },
+                include: { years: { include: { semesters: true } }, shift: true },
+            });
+
+            for (const year of course.years) {
+                for (const semester of year.semesters) {
+                    await prisma.subject.deleteMany({
+                        where: { semesterId: semester.id },
+                    });
+                }
+                await prisma.semester.deleteMany({
+                    where: { yearId: year.id },
+                });
+            }
+            await prisma.year.deleteMany({
+                where: { courseId: course.id },
+            });
+            await prisma.shift.deleteMany({
+                where: { courseId: course.id },
+            });
+
+            return prisma.course.delete({
+                where: { id: Number(id) },
+            });
+        });
     }
 }
