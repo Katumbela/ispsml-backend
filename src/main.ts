@@ -21,7 +21,7 @@ async function bootstrap() {
   app.enableCors({
     origin: ['https://ispsml.ao', 'https://ispsml-platform.vercel.app'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: 'Content-Type, Authorization, app_name',
+    allowedHeaders: 'Content-Type, Authorization, X-App-Request',
     credentials: false,
   });
 
