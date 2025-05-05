@@ -19,7 +19,7 @@ async function bootstrap() {
 
   // CORS configurado para permitir apenas as origens específicas
   app.enableCors({
-    origin: ['https://ispsml.ao', 'https://ispsml-platform.vercel.app'],
+    origin: ['https://ispsml.ao', 'http://ispsml.ao', 'ispsml.ao', 'https://ispsml-platform.vercel.app'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization, X-App-Request',
     credentials: false,
