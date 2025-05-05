@@ -27,22 +27,22 @@ async function bootstrap() {
 
   // Middleware para verificar o cabeçalho app_name
   app.use((req, res, next) => {
-    const appName = req.headers['app_name'];
-    
+    const appName = req.headers['X-App-Request'];
+
     // Se a requisição for OPTIONS (preflight), permitimos passar
     if (req.method === 'OPTIONS') {
       next();
       return;
     }
-    
+
     // Verificar se o app_name está correto
-    if (appName !== 'ispsml-platform-6816d69d5f71486c478112fd') {
+    if (appName !== 'ispsml-platform-93e7c6a1-b8d4-4f3e-a1c2-7d8f6e4a2b0c') {
       return res.status(403).json({
         statusCode: 403,
         message: 'Access denied. Invalid application.',
       });
     }
-    
+
     next();
   });
 
