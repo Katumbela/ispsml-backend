@@ -37,12 +37,12 @@ async function bootstrap() {
     }
 
     // Verificar se o app_name está correto
-    if (appName !== 'ispsml-platform-93e7c6a1-b8d4-4f3e-a1c2-7d8f6e4a2b0c') {
-      return res.status(403).json({
-        statusCode: 403,
-        message: 'Access denied. Invalid application.',
-      });
-    }
+    // if (appName !== 'ispsml-platform-93e7c6a1-b8d4-4f3e-a1c2-7d8f6e4a2b0c') {
+    //   return res.status(403).json({
+    //     statusCode: 403,
+    //     message: 'Access denied. Invalid application.',
+    //   });
+    // }
 
     next();
   });
